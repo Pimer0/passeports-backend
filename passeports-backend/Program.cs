@@ -1,41 +1,83 @@
+using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using Npgsql;
+using passeports_backend.Context;
+using passeports_backend.Endpoints;
+using Serilog;
+Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization(); 
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer(); // Gardez cette ligne
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo 
+    { 
+        Title = "Passeports Backend", 
+        Version = "v1" 
+    });
+});
+// Configuration de Serilog
+var loggerConfiguration = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Hour);
+var logger = loggerConfiguration.CreateLogger();
+builder.Logging.AddSerilog(logger);
+
+// Configuration de la connexion à la base de données
+string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("La chaîne de connexion à la base de données n'est pas définie.");
+}
+builder.Services.AddDbContext<PostgresContext>(options => options.UseNpgsql(connectionString));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger(); 
+    app.UseSwaggerUI(c => 
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Passeports Backend v1");
+        c.RoutePrefix = "swagger";
+    });
 }
 
-app.UseHttpsRedirection();
 
-var summaries = new[]
+
+app.UseCors("AllowAll");
+app.UseHttpsRedirection(); // Ajout de la redirection HTTPS
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+
+
+// Test de connexion à la base de données
+try
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
+    using (var connection = new NpgsqlConnection(connectionString))
     {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
+        connection.Open();
+        Console.WriteLine("Connexion réussie à la base de données PostgreSQL.");
+
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Erreur lors de la connexion à la base de données : {ex.Message}");
+}
+
+app.MapGroup("/passeport").MapPasseportEndpoints();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
