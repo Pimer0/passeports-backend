@@ -1,0 +1,6 @@
+@passeports_backend_HostAddress = http://localhost:5023
+
+GET {{passeports_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

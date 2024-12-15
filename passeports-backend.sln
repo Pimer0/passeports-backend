@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "passeports-backend", "passeports-backend\passeports-backend.csproj", "{907B01A5-051A-4AF9-A7C8-12E81F42A156}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5425A8EB-0F66-459B-BABA-B58FE17EAE6D}"
+	ProjectSection(SolutionItems) = preProject
+		compose.yaml = compose.yaml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{907B01A5-051A-4AF9-A7C8-12E81F42A156}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{907B01A5-051A-4AF9-A7C8-12E81F42A156}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{907B01A5-051A-4AF9-A7C8-12E81F42A156}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{907B01A5-051A-4AF9-A7C8-12E81F42A156}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
