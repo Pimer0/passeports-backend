@@ -10,6 +10,8 @@ public partial class Passeport
     public string Pays { get; set; } = null!;
 
     public string? Description { get; set; }
+    
+    public string? Image { get; set; }
 
     public virtual ICollection<Avantage> Avantages { get; set; } = new List<Avantage>();
 }
