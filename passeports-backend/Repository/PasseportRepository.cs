@@ -1,20 +1,38 @@
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using passeports_backend.entities;
-
+using passeports_backend.Models;
 namespace passeports_backend.Repository;
 
-public class PasseportRepository : IRepository<Passeport>
+public class PasseportRepository : IRepository
 {
     private readonly PostgresContext _context;
-    
-    public Passeport? GetById(int id)
+
+    public async Task<IResponseDataModel<Passeport>> GetAsync(Expression<Func<Passeport, bool>>? filter)
     {
-        var passeport = from p in _context.Passeports
-            where p.Id == id
-            select p;
-        return passeport.FirstOrDefault();
+        try
+        {
+            var data = await _context.Passeports.SingleOrDefaultAsync(filter);
+            return data != null
+                ? new ResponseDataModel<Passeport>
+                {
+                    Success = true,
+                    Data = data
+                }
+                : new ResponseDataModel<Passeport>
+                {
+                    Success = false,
+                    Message = "Passeport not found"
+                };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
-    public IEnumerable<Passeport> GetAll()
+public IEnumerable<Passeport> GetAll()
     {
         throw new NotImplementedException();
     }

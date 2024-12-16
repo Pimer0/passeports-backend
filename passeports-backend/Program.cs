@@ -2,21 +2,25 @@ using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Npgsql;
-using passeports_backend.Context;
 using passeports_backend.Endpoints;
+using passeports_backend.entities;
+using passeports_backend.Repository;
+using passeports_backend.Services;
 using Serilog;
+using PostgresContext = passeports_backend.Context.PostgresContext;
+
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddScoped<IRepository, PasseportRepository>();
+builder.Services.AddScoped<IPasseportService, PasseportService>();
 builder.Services.AddOpenApi();
-
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization(); 
-
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer(); // Gardez cette ligne
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo 
@@ -25,6 +29,7 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1" 
     });
 });
+
 // Configuration de Serilog
 var loggerConfiguration = new LoggerConfiguration()
     .WriteTo.Console()
