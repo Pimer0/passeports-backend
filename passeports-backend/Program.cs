@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 using passeports_backend.Endpoints;
-using passeports_backend.entities;
 using passeports_backend.Repository;
 using passeports_backend.Services;
 using Serilog;
