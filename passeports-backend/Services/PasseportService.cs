@@ -18,22 +18,22 @@ public class PasseportService : IPasseportService
         throw new NotImplementedException();
     }
 
-    public async Task<IResponseDataModel<Passeport>> GetPasseport(int id)
+public async Task<IResponseDataModel<Passeport>> GetPasseport(int id)
+{
+    try
     {
-        try
-        {
-            return await _repository.GetAsync(p => p.Id == id);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return new ResponseDataModel<Passeport> 
-            { 
-                Success = false, 
-                Message = "Une erreur est survenue lors de la récupération du passeport" 
-            };
-        }
+        return await _repository.GetAsync(p => p.Id == id);
     }
+    catch (Exception e)
+    {
+        Console.WriteLine(e);
+        return new ResponseDataModel<Passeport> 
+        { 
+            Success = false, 
+            Message = "Une erreur est survenue lors de la récupération du passeport" 
+        };
+    }
+}
 
     public Task<IResponseDataModel<IEnumerable<Passeport>>> GetAllPasseports()
     {

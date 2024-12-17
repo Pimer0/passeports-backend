@@ -29,6 +29,7 @@ public class PasseportRepository : IRepository
 
             // Utilisation de FirstOrDefaultAsync pour plus de sécurité
             var data = await _context.Passeports
+                .Include(p => p.Avantages)
                 .Where(filter)
                 .FirstOrDefaultAsync();
 
