@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using passeports_backend.Context;
+using passeports_backend.DTOs;
 using passeports_backend.entities;
 using passeports_backend.Models;
 namespace passeports_backend.Repository;
@@ -13,50 +14,64 @@ public class PasseportRepository : IRepository
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    public async Task<IResponseDataModel<Passeport>> GetAsync(Expression<Func<Passeport, bool>>? filter)
+    public async Task<IResponseDataModel<PassportWithDetailsDto>> GetAsync(Expression<Func<Passeport, bool>>? filter)
     {
         try
         {
-            // Vérification des paramètres
             if (filter == null)
             {
-                return new ResponseDataModel<Passeport>
+                return new ResponseDataModel<PassportWithDetailsDto>
                 {
                     Success = false,
                     Message = "Filtre non spécifié"
                 };
             }
 
-            // Utilisation de FirstOrDefaultAsync pour plus de sécurité
+
             var data = await _context.Passeports
                 .Include(p => p.Avantages)
                 .Where(filter)
                 .FirstOrDefaultAsync();
 
-            return data != null
-                ? new ResponseDataModel<Passeport>
-                {
-                    Success = true,
-                    Data = data
-                }
-                : new ResponseDataModel<Passeport>
+            if (data == null)
+            {
+                return new ResponseDataModel<PassportWithDetailsDto>
                 {
                     Success = false,
                     Message = "Passeport not found"
                 };
+            }
+
+
+            var passportWithDetailsDto = new PassportWithDetailsDto
+            {
+                Id = data.Id,
+                Pays = data.Pays,
+                Description = data.Description,
+                Avantages = data.Avantages.Select(a => new AvantageDetailsDto
+                {
+                    Id = a.Id,
+                    Contenu = a.Contenu,
+                    PaysVisitables = a.PaysVisitables
+                }).ToList()
+            };
+
+            return new ResponseDataModel<PassportWithDetailsDto>
+            {
+                Success = true,
+                Data = passportWithDetailsDto
+            };
         }
         catch (Exception ex)
         {
-            // Logging de l'exception
-            Console.WriteLine($"Erreur dans GetAsync : {ex.Message}");
+
             
-            return new ResponseDataModel<Passeport>
+            return new ResponseDataModel<PassportWithDetailsDto>
             {
                 Success = false,
                 Message = $"Erreur lors de la récupération : {ex.Message}"
             };
         }
-    
     }
 
 public IEnumerable<Passeport> GetAll()

@@ -8,8 +8,7 @@ public class AutoMapperProfile : Profile
 {
     public AutoMapperProfile()
     {
-        CreateMap<Avantage, AvantageDto>()
-            .ConstructUsing(a => new AvantageDto(a.Id, a.Contenu, a.PaysVisitables));
-        CreateMap<AvantageDto, Avantage>();
+        CreateMap<Passeport, PasseportDto>();
+        CreateMap<Avantage, AvantageDto>();
     }
 }

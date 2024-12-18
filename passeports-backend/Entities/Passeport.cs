@@ -12,7 +12,7 @@ public partial class Passeport
 
     public string? Description { get; set; }
     
-    public byte? Image { get; set; }
+    public byte? Image { get; set; } 
 
-    public virtual ICollection<AvantageDto> Avantages { get; set; } = new List<AvantageDto>();
+    public virtual ICollection<Avantage> Avantages { get; set; }
 }

@@ -11,5 +11,5 @@ public partial class Avantage
 
     public int PaysVisitables { get; set; }
 
-    public virtual ICollection<Passeport> Passeports { get; set; } = new List<Passeport>();
+    public virtual ICollection<Passeport> Passeports { get; set; }
 }
