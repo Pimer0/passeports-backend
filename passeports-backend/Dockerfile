@@ -1,23 +1,32 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
+﻿# Étape 1 : Image de base pour l'exécution
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
 
+# Étape 2 : Image de construction
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["passeports-backend.csproj", "passeports-backend/"]
-RUN dotnet restore "passeports-backend/passeports-backend.csproj"
+
+# Copie du fichier .csproj
+COPY ["passeports-backend.csproj", "."]
+RUN dotnet restore "passeports-backend.csproj"
+
+# Copie du reste des fichiers
 COPY . .
-WORKDIR "/src/passeports-backend"
+
+# Compilation du projet
 RUN dotnet build "passeports-backend.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
+# Étape 3 : Publication
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "passeports-backend.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+# Étape 4 : Préparer l'image finale
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV ASPNETCORE_ENVIRONMENT=Development
 ENTRYPOINT ["dotnet", "passeports-backend.dll"]
+
