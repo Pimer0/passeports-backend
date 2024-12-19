@@ -7,7 +7,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["passeports-backend/passeports-backend.csproj", "passeports-backend/"]
+COPY ["passeports-backend.csproj", "passeports-backend/"]
 RUN dotnet restore "passeports-backend/passeports-backend.csproj"
 COPY . .
 WORKDIR "/src/passeports-backend"

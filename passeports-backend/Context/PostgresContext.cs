@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using passeports_backend.entities;
 
 namespace passeports_backend.Context;
@@ -15,6 +16,22 @@ public partial class PostgresContext : DbContext
         : base(options)
     {
     }
+    
+protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+{
+    var connectionString = optionsBuilder.Options.FindExtension<CoreOptionsExtension>()?.ApplicationServiceProvider
+        ?.GetService<IConfiguration>()?.GetConnectionString("DefaultConnection");
+
+    if (connectionString != null)
+    {
+        optionsBuilder.UseNpgsql(connectionString, npgsqlOptions =>
+        {
+            npgsqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+        });
+    }
+
+    base.OnConfiguring(optionsBuilder);
+}
 
     public virtual DbSet<Avantage> Avantages { get; set; }
 
