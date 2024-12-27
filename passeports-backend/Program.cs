@@ -49,13 +49,28 @@ public class Program
         builder.Logging.AddSerilog(logger);
 
 // Configuration de la connexion à la base de données
-        string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        /*string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         if (string.IsNullOrEmpty(connectionString))
         {
             throw new InvalidOperationException("La chaîne de connexion à la base de données n'est pas définie.");
         }
 
-        builder.Services.AddDbContext<PostgresContext>(options => options.UseNpgsql(connectionString));
+        builder.Services.AddDbContext<PostgresContext>(options => options.UseNpgsql(connectionString));*/
+// Récupération du chemin du secret
+        string connectionStringPath = builder.Configuration.GetConnectionString("DefaultConnection");
+
+        if (File.Exists(connectionStringPath))
+        {
+            // Lire le contenu du fichier contenant la chaîne de connexion
+            string connectionString = File.ReadAllText(connectionStringPath).Trim();
+            builder.Services.AddDbContext<PostgresContext>(options =>
+                options.UseNpgsql(connectionString)
+            );
+        }
+        else
+        {
+            throw new InvalidOperationException("Le fichier contenant la chaîne de connexion n'a pas été trouvé.");
+        }
 
         var app = builder.Build();
 
@@ -82,7 +97,7 @@ public class Program
 // Test de connexion à la base de données
         try
         {
-            using (var connection = new NpgsqlConnection(connectionString))
+            using (var connection = new NpgsqlConnection(connectionStringPath))
             {
                 connection.Open();
                 Console.WriteLine("Connexion réussie à la base de données PostgreSQL.");

@@ -23,3 +23,16 @@
 **/values.dev.yaml
 LICENSE
 README.md
+bin/
+obj/
+*.user
+*.suo
+*.bak
+*.log
+*.nupkg
+*.snupkg
+.vscode/
+.idea/
+.env
+node_modules/
+wwwroot/
