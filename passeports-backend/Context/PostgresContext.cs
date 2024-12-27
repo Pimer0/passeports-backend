@@ -19,23 +19,12 @@ public partial class PostgresContext : DbContext
     
 protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 {
-    string connectionStringPath = optionsBuilder.Options.FindExtension<CoreOptionsExtension>()?.ApplicationServiceProvider?.GetService<IConfiguration>()?.GetConnectionString("DefaultConnection");
+    var connectionString = optionsBuilder.Options.FindExtension<CoreOptionsExtension>()?.ApplicationServiceProvider
+        ?.GetService<IConfiguration>()?.GetConnectionString("DefaultConnection");
 
-    if (File.Exists(connectionStringPath))
+    if (connectionString != null)
     {
-        // Lire le contenu du fichier contenant la chaîne de connexion
-        string connectionString = File.ReadAllText(connectionStringPath).Trim();
-        optionsBuilder.UseNpgsql(connectionString);
-
-    }
-    else
-    {
-        throw new InvalidOperationException("Le fichier contenant la chaîne de connexion n'a pas été trouvé.");
-    }
-
-    if (connectionStringPath != null)
-    {
-        optionsBuilder.UseNpgsql(connectionStringPath, npgsqlOptions =>
+        optionsBuilder.UseNpgsql(connectionString, npgsqlOptions =>
         {
             npgsqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
         });
