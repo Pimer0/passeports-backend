@@ -14,6 +14,15 @@ public class Program
     {
         Env.Load();
         var builder = WebApplication.CreateBuilder(args);
+
+        // Lecture du secret Docker
+        var secretPath = Environment.GetEnvironmentVariable("DB_CONNECTION_FILE");
+        if (!string.IsNullOrEmpty(secretPath) && File.Exists(secretPath))
+        {
+            var dockerConnectionString = File.ReadAllText(secretPath).Trim();
+            builder.Configuration.GetSection("ConnectionStrings")["DefaultConnection"] = dockerConnectionString;
+        }
+
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowAll",
@@ -23,8 +32,7 @@ public class Program
                     .AllowAnyHeader());
         });
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+        // Add services to the container.
         builder.Services.AddScoped<IRepository, PasseportRepository>();
         builder.Services.AddScoped<IPasseportService, PasseportService>();
         builder.Services.AddOpenApi();
@@ -41,27 +49,20 @@ public class Program
             });
         });
 
-// Configuration de Serilog
+        // Configuration de Serilog
         var loggerConfiguration = new LoggerConfiguration()
             .WriteTo.Console()
             .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Hour);
         var logger = loggerConfiguration.CreateLogger();
         builder.Logging.AddSerilog(logger);
 
-// Configuration de la connexion à la base de données
+        // Configuration de la connexion à la base de données
         string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-        if (string.IsNullOrEmpty(connectionString))
-        {
-            throw new InvalidOperationException("La chaîne de connexion à la base de données n'est pas définie.");
-        }
-
         builder.Services.AddDbContext<PostgresContext>(options => options.UseNpgsql(connectionString));
-
-
 
         var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment() || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
         {
             app.UseSwagger();
@@ -72,28 +73,24 @@ public class Program
             });
         }
 
-
-
         app.UseCors("AllowAll");
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
 
-
-// Test de connexion à la base de données
+        // Test de connexion à la base de données
         try
         {
             using (var connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
-                Console.WriteLine("Connexion réussie à la base de données PostgreSQL.");
-
+                logger.Information("Connexion réussie à la base de données PostgreSQL.");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erreur lors de la connexion à la base de données : {ex.Message}");
+            logger.Error(ex, "Erreur lors de la connexion à la base de données");
         }
 
         app.MapGroup("/passeport").MapPasseportEndpoints();

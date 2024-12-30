@@ -9,14 +9,14 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # Copie du fichier .csproj et restore dans le bon dossier
-COPY ["passeports-backend.csproj", "."]
+COPY ["passeports-backend/passeports-backend.csproj", "."]
 RUN dotnet restore "passeports-backend.csproj"
 
 # Copie du reste des fichiers
 COPY . .
 
 # Compilation du projet dans le bon dossier
-RUN dotnet build "passeports-backend.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "passeports-backend.csproj" -c $BUILD_CONFIGURATION -o /app/build /p:UseAppHost=false
 
 # Étape 3 : Publication
 FROM build AS publish
