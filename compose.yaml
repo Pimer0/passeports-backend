@@ -3,7 +3,7 @@
     image: "traefik:v3.2"
     command:
       - "--api.insecure=true"
-      - "-providers.docker.network=passeports-network"
+      - "--providers.docker.network=passeports-network"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entryPoints.web.address=:80"
