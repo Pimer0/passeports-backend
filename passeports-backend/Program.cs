@@ -14,7 +14,6 @@ public class Program
     {
         Env.Load();
         var builder = WebApplication.CreateBuilder(args);
-        builder.WebHost.UseUrls("http://0.0.0.0:5032");
 
         // Lecture du secret Docker
         var secretPath = Environment.GetEnvironmentVariable("DB_CONNECTION_FILE");
