@@ -10,7 +10,8 @@
       - "--entryPoints.web.address=:80"
     ports:
       - "80:80"
-      - "8080:8080"
+      - "443:443"
+      - "8081:8080"  # Change le port d'admin Traefik
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
   passeports-backend:
