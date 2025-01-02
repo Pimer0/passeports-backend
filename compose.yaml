@@ -15,6 +15,10 @@
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
   passeports-backend:
     image: passeports-backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.passeports-backend.rule=Host(`passportmagician.com`)"
+      - "traefik.http.routers.passeports-backend.entrypoints=web"
     build:
       context: .
       dockerfile: passeports-backend/Dockerfile
@@ -30,10 +34,6 @@
         published: 8080
         protocol: tcp
         mode: host
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.passeports-backend.rule=Host(`passportmagician.com`)"
-      - "traefik.http.routers.passeports-backend.entrypoints=web"
     secrets:
       - source: db_connection_string
         target: db_connection_string
