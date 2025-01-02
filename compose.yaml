@@ -14,12 +14,12 @@
       - "8081:8080"  # Change le port d'admin Traefik
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-  passeports-backend:
+  passeports:
     image: passeports-backend
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.passeports-backend.rule=Host(`passportmagician.com`)"
-      - "traefik.http.routers.passeports-backend.entrypoints=web"
+      - "traefik.http.routers.passeports.rule=Host(`passportmagician.com`)"
+      - "traefik.http.routers.passeports.entrypoints=web"
     build:
       context: .
       dockerfile: passeports-backend/Dockerfile
