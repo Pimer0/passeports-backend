@@ -9,7 +9,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # Copie du fichier .csproj et restore dans le bon dossier
-COPY ["passeports-backend/passeports-backend.csproj", "."]
+COPY ["/passeports-backend.csproj", "."]
 RUN dotnet restore "passeports-backend.csproj"
 
 # Copie du reste des fichiers
