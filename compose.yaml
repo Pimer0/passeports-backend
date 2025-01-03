@@ -58,7 +58,6 @@
 
 networks:
   passeports-network:
-    external: true
     driver: overlay
     attachable: true
 volumes:
