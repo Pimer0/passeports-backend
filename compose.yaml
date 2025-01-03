@@ -6,7 +6,7 @@
     command:
       - "--api.dashboard=true"
       - "--log.level=INFO"
-        #- --log.filepath=/var/log/traefik.log
+      - "--log.filepath=/var/log/traefik.log"
       - "--accesslog=true"
       - "--providers.docker.network=passeports-network"
       - "--providers.docker.exposedbydefault=false"
@@ -58,6 +58,7 @@
 
 networks:
   passeports-network:
+    external: true
     driver: overlay
     attachable: true
 volumes:
