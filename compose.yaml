@@ -29,7 +29,7 @@
       - "traefik.http.routers.passeports.rule=Host(`passportmagician.com`)"
       - "traefik.http.routers.passeports.entrypoints=websecure"
       - "traefik.http.services.passeports.loadbalancer.server.port=8080"  # Port interne du backend
-      - "traefik.http.routers.guestbook.tls.certresolver=myresolver"
+      - "traefik.http.routers.passeports.tls.certresolver=myresolver"
     build:
       context: .
       dockerfile: passeports-backend/Dockerfile
