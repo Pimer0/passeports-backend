@@ -28,7 +28,8 @@
       context: .
       dockerfile: passeports-backend/Dockerfile
     deploy:
-      replicas: 1
+      mode: replicated
+      replicas: 3
       restart_policy:
         condition: any
         delay: 5s
