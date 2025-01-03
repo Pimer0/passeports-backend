@@ -4,17 +4,21 @@
     networks:
       - passeports-network
     command:
-      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--log.level=INFO"
+        #- --log.filepath=/var/log/traefik.log
+      - "--accesslog=true"
       - "--providers.docker.network=passeports-network"
-      - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.email=paulmerandon@gmail.com"
-      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http.tls.certresolver=myresolver"
+      - "--certificatesresolvers.myresolver.acme.email=paulmerandon@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+
     ports:
       - mode: host
         protocol: tcp
@@ -43,12 +47,6 @@
     deploy:
       mode: replicated
       replicas: 3
-      restart_policy:
-        condition: any
-        delay: 5s
-        max_attempts: 3
-        window: 120s
-    ports: []  # Pas besoin de publier 8080 directement
     secrets:
       - source: db_connection_string
         target: db_connection_string
@@ -64,6 +62,7 @@ networks:
     attachable: true
 volumes:
   letsencrypt:
+    name: letsencrypt
 secrets:
   db_connection_string:
     external: true
