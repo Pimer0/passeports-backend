@@ -8,11 +8,13 @@
       - "--providers.docker.network=passeports-network"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--entryPoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.email=paulmerandon@gmail.com"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
     ports:
       - "80:80"
       - "443:443"
@@ -55,7 +57,8 @@ networks:
   passeports-network:
     driver: overlay
     attachable: true
-
+volumes:
+  letsencrypt:
 secrets:
   db_connection_string:
     external: true
