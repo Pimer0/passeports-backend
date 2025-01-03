@@ -27,7 +27,7 @@
     image: passeports-backend
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=docker_external"
+      - "traefik.docker.network=passeports-network"
       - "traefik.http.routers.passeports.rule=Host(`passportmagician.com`)"
       - "traefik.http.routers.passeports.entrypoints=websecure"
       - "traefik.http.services.passeports.loadbalancer.server.port=8080"  # Port interne du backend
