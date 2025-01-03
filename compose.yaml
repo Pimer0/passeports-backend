@@ -18,7 +18,8 @@
       - "443:443"
       - "8081:8080"  # Interface admin
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /letsencrypt:/letsencrypt
 
   passeports:
     image: passeports-backend
@@ -26,8 +27,9 @@
       - "traefik.enable=true"
       - "traefik.docker.network=docker_external"
       - "traefik.http.routers.passeports.rule=Host(`passportmagician.com`)"
-      - "traefik.http.routers.passeports.entrypoints=web"
+      - "traefik.http.routers.passeports.entrypoints=websecure"
       - "traefik.http.services.passeports.loadbalancer.server.port=8080"  # Port interne du backend
+      - "traefik.http.routers.guestbook.tls.certresolver=myresolver"
     build:
       context: .
       dockerfile: passeports-backend/Dockerfile
