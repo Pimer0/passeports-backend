@@ -31,7 +31,6 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/pimer0/passport-backend:prod
             ghcr.io/pimer0/passport-backend:${{ github.sha }}
 
   deploy:
