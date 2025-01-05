@@ -93,7 +93,7 @@ public class Program
             logger.Error(ex, "Erreur lors de la connexion à la base de données");
         }
 
-        app.MapGroup("/passeports").MapPasseportEndpoints();
+        app.MapGroup("/passeportss").MapPasseportEndpoints();
 
         app.Run();
     }
