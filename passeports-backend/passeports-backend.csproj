@@ -37,7 +37,6 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
-      <Content Include=".github\workflows\pipeline.yaml" />
     </ItemGroup>
 
     <ItemGroup>
