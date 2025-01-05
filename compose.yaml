@@ -33,7 +33,7 @@
       - letsencrypt:/letsencrypt
 
   passeports:
-    image: passeports-backend
+    image: ghcr.io/pimer0/passport-backend:prod
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=passeports-network"
